@@ -1,0 +1,85 @@
+version: 2
+
+sources:
+  - name: pubg_raw
+    description: "Raw PUBG telemetry data from API"
+    database: "{{ target.database }}"
+    schema: raw_pubg
+    tables:
+      - name: telemetry_events
+        description: "Raw telemetry events from PUBG matches"
+        columns:
+          - name: _D
+            description: "Event timestamp"
+            data_type: timestamp
+          - name: _T
+            description: "Event type"
+            data_type: varchar
+          - name: common
+            description: "Common object with game state info"
+            data_type: variant
+          - name: match_id
+            description: "Match identifier"
+            data_type: varchar
+          - name: event_data
+            description: "Event-specific data as JSON"
+            data_type: variant
+          - name: ingested_at
+            description: "When this record was ingested"
+            data_type: timestamp
+        tests:
+          - unique:
+              column_name: "concat(_D, _T, match_id)"
+      
+      - name: matches
+        description: "Match metadata"
+        columns:
+          - name: match_id
+            description: "Unique match identifier"
+            data_type: varchar
+            tests:
+              - unique
+              - not_null
+          - name: map_name
+            description: "Map where match was played"
+            data_type: varchar
+          - name: game_mode
+            description: "Game mode (solo, duo, squad, etc.)"
+            data_type: varchar
+          - name: match_type
+            description: "Type of match"
+            data_type: varchar
+          - name: created_at
+            description: "Match creation timestamp"
+            data_type: timestamp
+          - name: duration
+            description: "Match duration in seconds"
+            data_type: integer
+          - name: telemetry_url
+            description: "URL to telemetry data"
+            data_type: varchar
+          - name: ingested_at
+            description: "When this record was ingested"
+            data_type: timestamp
+
+      - name: players
+        description: "Player information"
+        columns:
+          - name: account_id
+            description: "Player account ID"
+            data_type: varchar
+            tests:
+              - unique
+              - not_null
+          - name: player_name
+            description: "Player display name"
+            data_type: varchar
+          - name: platform
+            description: "Gaming platform (steam, xbox, psn)"
+            data_type: varchar
+          - name: region
+            description: "Player region"
+            data_type: varchar
+          - name: ingested_at
+            description: "When this record was ingested"
+            data_type: timestamp
