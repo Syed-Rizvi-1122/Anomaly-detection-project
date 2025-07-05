@@ -1,0 +1,105 @@
+version: 2
+
+models:
+  - name: stg_telemetry_events
+    description: "Staging model for PUBG telemetry events with cleaned and standardized data"
+    columns:
+      - name: event_id
+        description: "Unique identifier for each telemetry event"
+        tests:
+          - unique
+          - not_null
+      - name: event_timestamp
+        description: "Timestamp when the event occurred"
+        tests:
+          - not_null
+      - name: event_type
+        description: "Type of telemetry event (LogPlayerKill, LogItemPickup, etc.)"
+        tests:
+          - not_null
+      - name: match_id
+        description: "Identifier for the match this event belongs to"
+        tests:
+          - not_null
+      - name: character_account_id
+        description: "Account ID of the player involved in the event"
+      - name: character_name
+        description: "Display name of the player"
+      - name: team_id
+        description: "Team identifier for the player"
+      - name: location_x
+        description: "X coordinate on the map (in centimeters)"
+      - name: location_y
+        description: "Y coordinate on the map (in centimeters)"
+      - name: location_z
+        description: "Z coordinate (elevation) on the map (in centimeters)"
+      - name: item_id
+        description: "Identifier for items involved in the event"
+      - name: item_category
+        description: "Category of the item (weapon, equipment, etc.)"
+      - name: item_subcategory
+        description: "Subcategory of the item"
+      - name: vehicle_id
+        description: "Identifier for vehicles involved in the event"
+      - name: vehicle_type
+        description: "Type of vehicle"
+      - name: damage
+        description: "Amount of damage dealt or taken"
+      - name: distance
+        description: "Distance involved in the event (for combat events)"
+      - name: attack_id
+        description: "Identifier linking related combat events"
+      - name: is_game
+        description: "Game phase indicator (0=pre-game, 1=active game, etc.)"
+
+  - name: stg_matches
+    description: "Staging model for PUBG matches with cleaned and standardized data"
+    columns:
+      - name: match_id
+        description: "Unique identifier for the match"
+        tests:
+          - unique
+          - not_null
+      - name: standardized_map_name
+        description: "Standardized name of the map"
+      - name: standardized_game_mode
+        description: "Standardized game mode (Solo, Duo, Squad)"
+      - name: match_type
+        description: "Type of match"
+      - name: created_at
+        description: "When the match was created"
+      - name: duration
+        description: "Match duration in seconds"
+      - name: duration_minutes
+        description: "Match duration in minutes"
+      - name: match_date
+        description: "Date when the match occurred"
+      - name: match_hour
+        description: "Hour when the match started"
+      - name: match_period
+        description: "Period of day (Morning, Afternoon, Evening, Night)"
+      - name: is_recent_match
+        description: "Flag indicating if match is within last 7 days"
+
+  - name: stg_players
+    description: "Staging model for PUBG players with cleaned and standardized data"
+    columns:
+      - name: account_id
+        description: "Unique player account identifier"
+        tests:
+          - unique
+          - not_null
+      - name: cleaned_player_name
+        description: "Cleaned player display name"
+      - name: standardized_platform
+        description: "Standardized platform name (Steam, Xbox, PlayStation)"
+      - name: standardized_region
+        description: "Standardized region name"
+      - name: platform_type
+        description: "Platform type (PC, Console, Other)"
+      - name: player_name_length
+        description: "Length of the player name"
+      - name: has_special_chars
+        description: "Flag indicating if player name contains special characters"
+      - name: player_recency
+        description: "Player registration recency (New, Recent, Established)"
