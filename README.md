@@ -24,6 +24,38 @@ This DBT project creates a comprehensive data warehouse for PUBG telemetry data 
 - `dim_locations` - Spatial coordinates and zone information
 - `dim_time` - Time dimension with temporal attributes
 
+## 🎮 Getting PUBG Data
+
+### Option 1: Real PUBG API Data (Recommended)
+
+Use the included script to fetch real telemetry data from the PUBG API:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Get your API key from https://developer.pubg.com/
+# Fetch data for specific players
+python3 pubg_api_fetcher.py --api-key YOUR_API_KEY --players PlayerName1 PlayerName2
+
+# See USAGE.md for detailed instructions
+```
+
+**Benefits:**
+- ✅ **Real telemetry data** from actual PUBG matches
+- ✅ **All event types** supported (kills, damage, items, movement)
+- ✅ **Recent matches** (last 14 days of data)
+- ✅ **Multiple platforms** (Steam, Xbox, PlayStation)
+
+**Requirements:**
+- Free PUBG API key from [developer.pubg.com](https://developer.pubg.com/)
+- Player names of recent active players
+- Internet connection for API calls
+
+### Option 2: Sample Data
+
+For testing without API access, you can create sample data files that match the expected schema. See the staging models for the required structure.
+
 ## Data Sources
 
 The project expects the following raw data sources in the `raw_pubg` schema:
@@ -59,34 +91,20 @@ The project expects the following raw data sources in the `raw_pubg` schema:
 ### Prerequisites
 - DBT Core 1.0+
 - Snowflake/BigQuery/Redshift connection
-- Raw PUBG telemetry data
+- PUBG API key (for real data)
 
 ### Setup
-1. Clone this repository
-2. Configure your `profiles.yml` file (see example below)
-3. Install dependencies: `dbt deps`
-4. Run the project: `dbt run`
-5. Test the models: `dbt test`
-6. Generate documentation: `dbt docs generate && dbt docs serve`
-
-### Sample Profile Configuration
-
-```yaml
-pubg_telemetry_dw:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      account: your_account
-      user: your_username
-      password: your_password
-      role: your_role
-      database: PUBG_DW
-      warehouse: COMPUTE_WH
-      schema: DEV
-      threads: 4
-      client_session_keep_alive: False
-```
+1. Get PUBG API key from [developer.pubg.com](https://developer.pubg.com/)
+2. Fetch telemetry data:
+   ```bash
+   python3 pubg_api_fetcher.py --api-key YOUR_KEY --players PlayerName1
+   ```
+3. Load data into your data warehouse
+4. Configure your `profiles.yml` file
+5. Install dependencies: `dbt deps`
+6. Run the project: `dbt run`
+7. Test the models: `dbt test`
+8. Generate documentation: `dbt docs generate && dbt docs serve`
 
 ## Model Descriptions
 
@@ -152,6 +170,22 @@ WHERE f.item_action = 'Pickup'
 GROUP BY i.clean_item_name, i.item_type, i.popularity_tier, t.day_name
 ORDER BY pickup_count DESC;
 ```
+
+## Files in This Project
+
+### Core DBT Project
+- `dbt_project.yml` - Main project configuration
+- `packages.yml` - DBT package dependencies
+- `models/` - All DBT models (staging, dimensions, facts)
+
+### Data Fetching
+- `pubg_api_fetcher.py` - Script to fetch real PUBG API data
+- `requirements.txt` - Python dependencies
+- `USAGE.md` - Detailed usage guide for the API fetcher
+
+### Documentation  
+- `README.md` - This file
+- `pubg_api_telemetry_guide.md` - PUBG API reference guide
 
 ## Performance Considerations
 
